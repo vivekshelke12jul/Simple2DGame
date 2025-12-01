@@ -1,5 +1,7 @@
 package main;
 
+import entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,18 +10,26 @@ public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
     final int scale = 3;
 
-    final int tileSize = originalTileSize * scale;
+    public final int tileSize = originalTileSize * scale;
     final int maxScreenCol = 16;
     final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenCol;
     final int screenHeight = tileSize * maxScreenRow;
 
+    // Fps
+    int fps = 60;
+
+    KeyHandler keyHandler = new KeyHandler();
     Thread gameThread;
+
+    Player player = new Player(this, keyHandler);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
+        this.addKeyListener(keyHandler);
+        this.setFocusable(true);
     }
 
     public void startGameThread() {
@@ -29,8 +39,49 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
+
+        double drawInterval = 1000000000.0 / fps;
+        // drawInterval = 1,66,66,666.66666667
+        long lastTime = System.nanoTime();
+        long curTime;
+        double delta = 0;
+        double timer = 0;
+        double drawCount = 0;
+
         while (gameThread != null) {
-            System.out.println("Game thread is running");
+
+            curTime = System.nanoTime();
+            long passedTime = curTime - lastTime;
+            delta += passedTime / drawInterval;
+            timer += passedTime;
+            lastTime = curTime;
+
+            if(delta >= 1){
+                update();
+                repaint();
+                drawCount++;
+                delta--;
+            }
+
+            if(timer >= 1000000000){
+                System.out.println("FPS:"+ drawCount);
+                timer = 0;
+                drawCount = 0;
+            }
         }
+    }
+
+    public void update() {
+        player.update();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+
+        player.draw(g2);
+
+        g2.dispose();
     }
 }
