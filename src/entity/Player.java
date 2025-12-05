@@ -28,8 +28,8 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues(){
-        worldX = 100;
-        worldY = 100;
+        worldX = 21*gamePanel.tileSize;
+        worldY = 23*gamePanel.tileSize;
         speed = 4;
         direction = "down";
     }

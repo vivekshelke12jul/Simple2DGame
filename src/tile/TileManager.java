@@ -35,10 +35,10 @@ public class TileManager {
             tiles[2].image = ImageIO.read(getClass().getResourceAsStream("/tile/water.png"));
 
             tiles[3] = new Tile();
-            tiles[3].image = ImageIO.read(getClass().getResourceAsStream("/tile/tree.png"));
+            tiles[3].image = ImageIO.read(getClass().getResourceAsStream("/tile/earth.png"));
 
             tiles[4] = new Tile();
-            tiles[4].image = ImageIO.read(getClass().getResourceAsStream("/tile/earth.png"));
+            tiles[4].image = ImageIO.read(getClass().getResourceAsStream("/tile/tree.png"));
 
             tiles[5] = new Tile();
             tiles[5].image = ImageIO.read(getClass().getResourceAsStream("/tile/sand.png"));
@@ -73,9 +73,6 @@ public class TileManager {
 
         int tileSize = gamePanel.tileSize;
 
-        int worldRow = 0;
-        int worldCol = 0;
-
         int worldX = 0;
         int worldY = 0;
 
@@ -83,18 +80,24 @@ public class TileManager {
         int screenY = 0;
 
 
-
-        for(int row = 0; row < gamePanel.maxWorldRow; row++){
-            worldX = row * tileSize;
-            for(int col = 0; col < gamePanel.maxScreenCol; col++){
-                worldY = col * tileSize;
+        for(int worldRow = 0; worldRow < gamePanel.maxWorldRow; worldRow++){
+            worldX = worldRow * tileSize;
+            for(int worldCol = 0; worldCol < gamePanel.maxWorldCol; worldCol++){
+                worldY = worldCol * tileSize;
 
                 int tileNum = mapTileNum[worldRow][worldCol];
                 screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
                 screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
-                g2.drawImage(tiles[tileNum].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+
+                if(
+                        screenX + gamePanel.tileSize > 0 &&
+                        screenX < gamePanel.screenWidth &&
+                        screenY + gamePanel.tileSize > 0 &&
+                        screenY < gamePanel.screenHeight
+                ){
+                    g2.drawImage(tiles[tileNum].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+                }
             }
         }
-
     }
 }
